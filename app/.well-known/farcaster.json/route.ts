@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-// Hosted Manifest - Exact same structure as working SOULPRINT
+// Hosted Manifest - Exact same structure as working SOULPRINT + baseBuilder
 const manifest = {
     "frame": {
         "name": "FAIRDROP",
@@ -30,6 +30,9 @@ const manifest = {
         "header": "",
         "payload": "",
         "signature": ""
+    },
+    "baseBuilder": {
+        "ownerAddress": "0x5583101e8f0DcbAA99B58b0f141858166FE622ce"
     }
 };
 
