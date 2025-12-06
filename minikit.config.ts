@@ -1,5 +1,5 @@
 // IMPORTANT: Update ROOT_URL after deploying to Vercel
-const ROOT_URL = "https://fairdrop-3qbysp90y-muratcans-projects-ce0b9ee3.vercel.app";
+const ROOT_URL = "https://fairdrop-olive.vercel.app";
 
 export const minikitConfig = {
     accountAssociation: {

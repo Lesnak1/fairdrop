@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Provider from '@/providers/Provider';
 
-const APP_URL = "https://fairdrop-3qbysp90y-muratcans-projects-ce0b9ee3.vercel.app";
+const APP_URL = "https://fairdrop-olive.vercel.app";
 
 export const metadata: Metadata = {
     metadataBase: new URL(APP_URL),
