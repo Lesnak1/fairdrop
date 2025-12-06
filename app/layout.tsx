@@ -2,9 +2,10 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Provider from '@/providers/Provider';
 
-const APP_URL = process.env.NEXT_PUBLIC_URL || "https://fairdrop.vercel.app";
+const APP_URL = "https://fairdrop-3qbysp90y-muratcans-projects-ce0b9ee3.vercel.app";
 
 export const metadata: Metadata = {
+    metadataBase: new URL(APP_URL),
     title: 'FAIRDROP - Farcaster Airdrop Estimator',
     description: 'Estimate your potential Farcaster airdrop tokens based on your real on-platform activity and engagement.',
     openGraph: {

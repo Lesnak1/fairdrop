@@ -1,9 +1,9 @@
 // IMPORTANT: Update ROOT_URL after deploying to Vercel
-const ROOT_URL = process.env.NEXT_PUBLIC_URL || "https://fairdrop.vercel.app";
+const ROOT_URL = "https://fairdrop-3qbysp90y-muratcans-projects-ce0b9ee3.vercel.app";
 
 export const minikitConfig = {
     accountAssociation: {
-        // Will be filled after deployment
+        // Will be filled after getting credentials from Farcaster Developer Tools
         "header": "",
         "payload": "",
         "signature": ""
@@ -12,8 +12,10 @@ export const minikitConfig = {
         version: "1",
         name: "FAIRDROP",
         subtitle: "Airdrop Estimator",
-        description: "Estimate your potential Farcaster airdrop tokens based on your real on-platform activity and engagement.",
+        description: "Estimate your potential Farcaster airdrop tokens based on your real activity.",
         iconUrl: `${ROOT_URL}/icon.png`,
+        imageUrl: `${ROOT_URL}/hero.png`,
+        buttonTitle: "Check Airdrop",
         splashImageUrl: `${ROOT_URL}/splash.png`,
         splashBackgroundColor: "#0D0D12",
         homeUrl: ROOT_URL,
