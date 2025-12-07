@@ -1,31 +1,30 @@
-// IMPORTANT: Update ROOT_URL after deploying to Vercel
+// FAIRDROP Manifest Configuration
 const ROOT_URL = "https://fairdrop-olive.vercel.app";
 
 export const minikitConfig = {
     accountAssociation: {
-        // Will be filled after getting credentials from Base Build
-        "header": "",
-        "payload": "",
-        "signature": ""
+        "header": "eyJmaWQiOjMwNTM2OSwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDRhNmVBQWUxMTkyQkM4Mzg5OTE5ZDRBMmNFQjZCRjcxMkQyNTJGODMifQ",
+        "payload": "eyJkb21haW4iOiJmYWlyZHJvcC1vbGl2ZS52ZXJjZWwuYXBwIn0",
+        "signature": "KodANJjr1fBNKCjOpC64k+VDceWsN5onZFSu5dscLnglfdoRL3tlDfONeeB8yCajXglG6iBtfuTDWTGiIuCTRRw="
     },
-    miniapp: {
+    frame: {
+        name: "Fairdrop",
         version: "1",
-        name: "FAIRDROP",
-        subtitle: "Airdrop Estimator",
-        description: "Estimate your potential Farcaster airdrop tokens based on your real activity.",
         iconUrl: `${ROOT_URL}/icon.png`,
+        homeUrl: ROOT_URL,
+        imageUrl: `${ROOT_URL}/hero.png`,
+        buttonTitle: "Check Airdrop",
         splashImageUrl: `${ROOT_URL}/splash.png`,
         splashBackgroundColor: "#0D0D12",
-        homeUrl: ROOT_URL,
         webhookUrl: `${ROOT_URL}/api/webhook`,
+        subtitle: "Airdrop Estimator",
+        description: "Estimate your potential Farcaster airdrop tokens based on your real on-platform activity and engagement.",
+        screenshotUrls: [`${ROOT_URL}/screenshot.png`],
         primaryCategory: "social",
-        screenshotUrls: [
-            `${ROOT_URL}/screenshot.png`
-        ],
+        tags: ["airdrop", "tokens", "farcaster", "estimator", "checker"],
         heroImageUrl: `${ROOT_URL}/hero.png`,
-        tags: ["airdrop", "tokens", "farcaster", "estimator", "finance"],
         tagline: "Know Your Airdrop Potential",
-        ogTitle: "FAIRDROP - Farcaster Airdrop Estimator",
+        ogTitle: "Farcaster Airdrop Estimator",
         ogDescription: "Estimate how many tokens you could receive in a Farcaster airdrop based on your real activity.",
         ogImageUrl: `${ROOT_URL}/hero.png`,
     },
