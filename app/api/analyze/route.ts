@@ -11,17 +11,24 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'FID required' }, { status: 400 });
     }
 
+    console.log(`[FAIRDROP API] Fetching data for FID: ${fid}`);
+    console.log(`[FAIRDROP API] Using API Key: ${NEYNAR_API_KEY.substring(0, 10)}...`);
+
     try {
-        // Fetch user data
+        // Fetch user data from Neynar API
         const userResponse = await fetch(`${NEYNAR_BASE_URL}/user/bulk?fids=${fid}`, {
             headers: {
                 'accept': 'application/json',
-                'api_key': NEYNAR_API_KEY,
+                'x-api-key': NEYNAR_API_KEY,  // Changed from 'api_key' to 'x-api-key'
             },
+            cache: 'no-store',
         });
 
+        console.log(`[FAIRDROP API] Neynar user response status: ${userResponse.status}`);
+
         if (!userResponse.ok) {
-            console.error('Neynar user API error:', userResponse.status);
+            const errorText = await userResponse.text();
+            console.error(`[FAIRDROP API] Neynar user API error: ${userResponse.status}`, errorText);
             // Return mock data on API failure
             return NextResponse.json(getMockUserData(parseInt(fid)));
         }
@@ -29,7 +36,15 @@ export async function GET(request: NextRequest) {
         const userData = await userResponse.json();
         const user = userData.users?.[0];
 
+        console.log(`[FAIRDROP API] Neynar user data received:`, {
+            fid: user?.fid,
+            username: user?.username,
+            follower_count: user?.follower_count,
+            following_count: user?.following_count
+        });
+
         if (!user) {
+            console.log(`[FAIRDROP API] No user found, using mock data`);
             return NextResponse.json(getMockUserData(parseInt(fid)));
         }
 
@@ -39,19 +54,23 @@ export async function GET(request: NextRequest) {
             const castsResponse = await fetch(`${NEYNAR_BASE_URL}/feed/user/${fid}/casts?limit=50`, {
                 headers: {
                     'accept': 'application/json',
-                    'api_key': NEYNAR_API_KEY,
+                    'x-api-key': NEYNAR_API_KEY,  // Changed from 'api_key' to 'x-api-key'
                 },
+                cache: 'no-store',
             });
+
+            console.log(`[FAIRDROP API] Neynar casts response status: ${castsResponse.status}`);
 
             if (castsResponse.ok) {
                 const castsData = await castsResponse.json();
                 casts = castsData.casts || [];
+                console.log(`[FAIRDROP API] Fetched ${casts.length} casts`);
             }
         } catch (e) {
-            console.error('Failed to fetch casts:', e);
+            console.error('[FAIRDROP API] Failed to fetch casts:', e);
         }
 
-        return NextResponse.json({
+        const responseData = {
             user: {
                 fid: user.fid,
                 username: user.username,
@@ -66,7 +85,7 @@ export async function GET(request: NextRequest) {
                         text: user.profile?.bio?.text || '',
                     },
                 },
-                verifiedAddresses: user.verified_addresses || { ethAddresses: [] },
+                verifiedAddresses: user.verified_addresses || { eth_addresses: [] },
             },
             casts: casts.map((c: any) => ({
                 hash: c.hash,
@@ -80,16 +99,19 @@ export async function GET(request: NextRequest) {
                     count: c.replies?.count || 0,
                 },
             })),
-        });
+        };
+
+        console.log(`[FAIRDROP API] Returning real user data with follower count: ${responseData.user.followerCount}`);
+        return NextResponse.json(responseData);
     } catch (error) {
-        console.error('API error:', error);
+        console.error('[FAIRDROP API] API error:', error);
         return NextResponse.json(getMockUserData(parseInt(fid)));
     }
 }
 
-// Generate mock data based on FID for consistent results
+// Generate mock data based on FID for consistent results (FALLBACK ONLY)
 function getMockUserData(fid: number) {
-    // Use FID as seed for pseudo-random but consistent values
+    console.log(`[FAIRDROP API] WARNING: Using mock data for FID ${fid}`);
     const seed = fid % 1000;
     const followerCount = Math.floor(100 + (seed * 15));
     const followingCount = Math.floor(50 + (seed * 5));
@@ -117,16 +139,17 @@ function getMockUserData(fid: number) {
             followerCount,
             followingCount,
             activeStatus: 'active',
-            powerBadge: fid < 50000, // OG users get power badge
+            powerBadge: fid < 50000,
             profile: {
                 bio: {
                     text: 'Farcaster user',
                 },
             },
             verifiedAddresses: {
-                ethAddresses: seed > 500 ? ['0x...'] : [],
+                eth_addresses: seed > 500 ? ['0x...'] : [],
             },
         },
         casts,
+        isMockData: true, // Flag to indicate this is mock data
     };
 }
