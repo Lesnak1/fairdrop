@@ -23,6 +23,7 @@ export default function Home() {
             setIsSDKLoaded(true); // Set immediately so UI renders
             try {
                 const ctx = await sdk.context;
+                console.log('Farcaster context:', ctx);
                 setContext(ctx);
                 await sdk.actions.ready();
             } catch (error) {
@@ -38,36 +39,48 @@ export default function Home() {
         setAppState('loading');
 
         try {
-            // Get FID from context or use a test FID
-            const fid = context?.user?.fid || 305369; // Default to user's FID for testing
+            // Get user info from Farcaster SDK context
+            const farcasterUser = context?.user;
+            const fid = farcasterUser?.fid || 305369; // Fallback FID for testing
 
-            // Fetch data from our server-side API route
+            console.log('Farcaster user from context:', farcasterUser);
+
+            // Fetch additional data from our server-side API route
             const response = await fetch(`/api/analyze?fid=${fid}`);
-            if (!response.ok) {
-                console.error('API error:', response.status);
-                setAppState('welcome');
-                return;
-            }
+            const apiData = response.ok ? await response.json() : null;
 
-            const data = await response.json();
+            // Use SDK context data as primary source, API data as supplement
+            const userData: FarcasterUser = {
+                fid: fid,
+                username: farcasterUser?.username || apiData?.user?.username || `user_${fid}`,
+                displayName: farcasterUser?.displayName || apiData?.user?.displayName || farcasterUser?.username || `User ${fid}`,
+                pfpUrl: farcasterUser?.pfpUrl || apiData?.user?.pfpUrl || '/icon.png',
+                followerCount: apiData?.user?.followerCount || 0,
+                followingCount: apiData?.user?.followingCount || 0,
+                activeStatus: apiData?.user?.activeStatus || 'active',
+                powerBadge: apiData?.user?.powerBadge || false,
+                profile: {
+                    bio: {
+                        text: apiData?.user?.profile?.bio?.text || '',
+                    },
+                },
+                verifiedAddresses: apiData?.user?.verifiedAddresses || { ethAddresses: [] },
+            };
 
-            if (!data.user) {
-                console.error('No user data returned');
-                setAppState('welcome');
-                return;
-            }
+            console.log('Final user data:', userData);
 
-            // Calculate airdrop score
-            const score = await calculateAirdropScore(data.user, { casts: data.casts || [] });
+            // Calculate airdrop score using API data (for casts and stats)
+            const castsData = { casts: apiData?.casts || [] };
+            const score = await calculateAirdropScore(userData, castsData);
 
-            setUser(data.user);
+            setUser(userData);
             setAirdropScore(score);
             setAppState('result');
         } catch (error) {
             console.error('Analysis failed:', error);
             setAppState('welcome');
         }
-    }, [context?.user?.fid]);
+    }, [context?.user]);
 
     // Share results
     const handleShare = useCallback(async () => {
