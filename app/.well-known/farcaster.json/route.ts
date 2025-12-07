@@ -8,30 +8,12 @@ export async function GET() {
     const response = await fetch(HOSTED_MANIFEST_URL);
     const hostedManifest = await response.json();
 
-    // Create manifest with BOTH frame (for Farcaster) AND miniapp (for Base.dev)
+    // Create manifest with IDENTICAL frame and miniapp keys
     const manifest = {
         // Keep original frame from Farcaster
         frame: hostedManifest.frame,
-        // Add miniapp key for Base.dev (copy from frame)
-        miniapp: {
-            version: hostedManifest.frame.version,
-            name: hostedManifest.frame.name,
-            subtitle: hostedManifest.frame.subtitle,
-            description: hostedManifest.frame.description,
-            iconUrl: hostedManifest.frame.iconUrl,
-            splashImageUrl: hostedManifest.frame.splashImageUrl,
-            splashBackgroundColor: hostedManifest.frame.splashBackgroundColor,
-            homeUrl: hostedManifest.frame.homeUrl,
-            webhookUrl: hostedManifest.frame.webhookUrl,
-            primaryCategory: hostedManifest.frame.primaryCategory,
-            screenshotUrls: hostedManifest.frame.screenshotUrls,
-            heroImageUrl: hostedManifest.frame.heroImageUrl,
-            tags: hostedManifest.frame.tags,
-            tagline: hostedManifest.frame.tagline,
-            ogTitle: hostedManifest.frame.ogTitle,
-            ogDescription: hostedManifest.frame.ogDescription,
-            ogImageUrl: hostedManifest.frame.ogImageUrl,
-        },
+        // miniapp must be IDENTICAL to frame
+        miniapp: hostedManifest.frame,
         // Keep accountAssociation from Farcaster
         accountAssociation: hostedManifest.accountAssociation,
         // Add baseBuilder for Base.dev
